@@ -33,7 +33,6 @@ To address class imbalance, I applied SMOTE (oversampling), Random Undersampling
 
 Observation: For df1, imbalance handling methods significantly improved F1-score and Recall, confirming their effectiveness in scenarios where the positive class is underrepresented. This came with an expected decrease in Accuracy, illustrating the precision-recall trade-off inherent in imbalanced learning.
 7. Comparative Analysis (Assignment Questions)
-Finally, I compiled answers to the assignment's key questions:
 
 Q1 (Preprocessing order effect): There is a SIGNIFICANT effect. Pipeline B consistently outperformed Pipeline A by a substantial margin (mean absolute F1 difference of 0.378).
 Q2 (Best generalization): L2 regularization generalized best across datasets (mean F1: 0.463 at C=1.0).
