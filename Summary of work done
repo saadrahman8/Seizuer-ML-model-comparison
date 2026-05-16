@@ -1,0 +1,41 @@
+Summary of Work Done
+I've successfully set up the environment, collected the necessary datasets, and performed comprehensive preprocessing, model training, and analysis to address the problem of epileptic seizure prediction. Here's a breakdown of what I've accomplished:
+
+1. Dataset Collection and Justification
+I began by collecting and summarizing three distinct EEG datasets, each chosen for specific characteristics to provide a robust foundation for my analysis:
+
+D1 (UCI Epileptic Seizure): This dataset contains 11,500 samples, with each representing one second of EEG activity encoded by 178 time-point features. It presented a significant class imbalance of 4:1 in favor of non-seizure events, which was crucial for testing imbalance handling techniques.
+D2 (BEED Bangalore EEG): With 8,000 samples and 16 features corresponding to scalp electrode channels, this dataset offered a contrasting class imbalance of 1:3, being seizure-heavy. Its different feature structure allowed for diverse preprocessing strategies.
+D3 (CHB-MIT Clinical EEG): This dataset comprised 3,546 samples, each flattened into 5,888 features from 23-channel by 256-timepoint EEG windows. It is approximately balanced (1:1), serving as a valuable control for evaluating class imbalance techniques.
+2. Preprocessing Pipelines
+To prepare the data for modeling, I designed and applied two distinct preprocessing pipelines to all datasets:
+
+Pipeline A: This pipeline involved MinMaxScaler for normalization, followed by VarianceThreshold to remove low-variance (noisy) features, and finally SelectKBest for feature selection. I encountered an initial KeyError due to VarianceThreshold removing all features from df1, which I rectified by adjusting the threshold to a lower 0.0001, ensuring successful processing across all datasets.
+Pipeline B: This more sophisticated pipeline started with a custom StatFeatureExtractor to generate five statistical features (mean, std, min, max, range) for each original feature. This was followed by StandardScaler for standardization and PCA for dimensionality reduction. This order was critical: feature extraction was done on raw signals, and scaling preceded PCA to prevent features with larger magnitudes from dominating.
+3. Baseline Model (Logistic Regression)
+I established a baseline using Logistic Regression (with default C=1.0 for moderate regularization) and evaluated its performance on the validation sets using Accuracy, F1-score, and PR-AUC. A key observation was that Pipeline B consistently and significantly outperformed Pipeline A across all datasets and metrics. For instance, df1's F1-score jumped from ~0.05 (Pipeline A) to ~0.85 (Pipeline B), highlighting the profound impact of effective feature engineering.
+
+4. Overfitting and Underfitting Demonstration
+I clearly demonstrated the concepts of overfitting and underfitting using df1 processed with Pipeline A. I created two scenarios:
+
+Underfitting: Achieved with very strong L2 regularization (C=0.001) and an artificially limited feature set (3 features), resulting in F1-scores near zero for both training and validation.
+Overfitting: Demonstrated with no regularization (C=1e6) and all features, showing a clear performance gap where training F1-score was high, but validation F1-score was much lower.
+Learning curves visually confirmed these phenomena, showing divergent trends between training and validation scores.
+
+5. Regularization Study
+I conducted a detailed study comparing L1, L2, and ElasticNet regularizations across a range of C values (from strong to weak) on Pipeline A outputs. My observations included:
+
+Sparsity: L1 and ElasticNet demonstrated increased sparsity (driving coefficients to zero) with stronger regularization (lower C), while L2 maintained 0% sparsity.
+Generalization (Q2): By analyzing the mean F1-score at C=1.0 across datasets, I found that L2 regularization generalized best, achieving the highest mean F1-score.
+ElasticNet Performance (Q3): Contrary to expectations, ElasticNet did not consistently outperform L1/L2, winning in only 28% of the comparisons.
+6. Class Imbalance Handling
+To address class imbalance, I applied SMOTE (oversampling), Random Undersampling, and Class Weighting techniques to Pipeline A outputs, focusing on the highly imbalanced df1 and df2 (with df3 serving as a balanced control).
+
+Observation: For df1, imbalance handling methods significantly improved F1-score and Recall, confirming their effectiveness in scenarios where the positive class is underrepresented. This came with an expected decrease in Accuracy, illustrating the precision-recall trade-off inherent in imbalanced learning.
+7. Comparative Analysis (Assignment Questions)
+Finally, I compiled answers to the assignment's key questions:
+
+Q1 (Preprocessing order effect): There is a SIGNIFICANT effect. Pipeline B consistently outperformed Pipeline A by a substantial margin (mean absolute F1 difference of 0.378).
+Q2 (Best generalization): L2 regularization generalized best across datasets (mean F1: 0.463 at C=1.0).
+Q3 (ElasticNet vs. L1/L2): ElasticNet does NOT consistently outperform L1/L2.
+Q4 (Imbalance handling interaction): Imbalance handling methods generally provide positive F1 gains, especially for highly imbalanced datasets, and these gains were observed across different regularization types.
